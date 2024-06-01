@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #f6d365, #fda085); /* Warm, vibrant gradient */
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#frames {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px; /* Increase the gap between frame containers */
+    margin-bottom: 40px; /* Increase the bottom margin for additional spacing */
+}
+
+.frame {
+    width: 500px; /* Increase the width of the frame containers */
+    height: 350px; /* Increase the height of the frame containers */
+    background-size: contain;  /* Ensures the entire image is visible within the container */
+    background-repeat: no-repeat;  /* Prevents the image from repeating */
+    background-position: center;  /* Centers the image within the container */
+    border: 5px solid #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin: 20px; /* Add margin to create spacing between frame containers */
+}
+
+.frame.hidden {
+    display: none;
+}
+
+#buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #4a90e2; /* Bright, cheerful blue */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+button:hover {
+    background-color: #357ABD; /* Darker blue on hover */
+    transform: scale(1.1);
+}
+
+input[type="text"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+    width: 80%;
+    max-width: 300px;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    background-color: #ccc;
+    transform: none;
+}
+
+#message {
+    color: #ff6f61; /* Bright, noticeable color for messages */
+    font-weight: bold;
+    margin-top: 20px;
+    font-size: 1.2em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
