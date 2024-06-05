@@ -1,0 +1,16 @@
+{
+  "name": "cinefinal",
+  "version": "1.0.0",
+  "description": "This is the readme for CineFinal. It is the second iteration of Cinedle and it integrates with MongoDB this time.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongodb": "^6.7.0"
+  }
+}
