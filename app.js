@@ -45,14 +45,13 @@ app.get('/connect-to-mongodb', async (req, res) => {
 
 app.get('/get-images', async (req, res) => {
     try {
-        const movies = await db.collection('movies').find().toArray(); // Adjust the collection name as needed
+        const movies = await db.collection('movies').find().toArray();
         res.json(movies);
     } catch (error) {
         console.error('Failed to fetch images from MongoDB', error);
         res.status(500).json({ error: 'Failed to fetch images' });
     }
 });
-
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

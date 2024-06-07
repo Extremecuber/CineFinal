@@ -169,27 +169,23 @@ async function loadImagesFromMongoDB() {
             correctMovie = randomMovie.title;
             console.log('Correct movie title:', correctMovie); // Debugging step
 
-            // Filter out the end game image based on the presence of 'pos' in the title
-            const movieFrames = randomMovie.frames.filter(frame => !frame.includes('pos'));
-            console.log('Filtered movie frames:', movieFrames); // Debugging step
-
             // Set the end game image path
-            endGameImage = randomMovie.frames.find(frame => frame.includes('pos'));
+            endGameImage = randomMovie.endGameImage;
             console.log('End game image path:', endGameImage); // Debugging step
 
             // Set maxGuesses based on the number of frames
-            maxGuesses = movieFrames.length;
+            maxGuesses = randomMovie.frames.length;
 
             // Push frames to the frames array
-            frames.push(...movieFrames);
+            frames.push(...randomMovie.frames);
             console.log('Frames array:', frames); // Debugging step
 
             // Display the first frame after images are loaded
             displayFrame(currentFrame);
         } else {
-            updateMessage('Failed to load images. Please try again later.', '#ff6f61');
+            updateMessage('Failed to load movies from the database.', '#ff6f61');
         }
     } else {
-        updateMessage('Failed to load images. Please try again later.', '#ff6f61');
+        updateMessage('Failed to connect to the database.', '#ff6f61');
     }
 }
