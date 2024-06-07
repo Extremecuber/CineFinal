@@ -46,6 +46,7 @@ app.get('/connect-to-mongodb', async (req, res) => {
 app.get('/get-images', async (req, res) => {
     try {
         const movies = await db.collection('movies').find().toArray();
+        console.log('Movies fetched from MongoDB:', movies); // Log the fetched data
         res.json(movies);
     } catch (error) {
         console.error('Failed to fetch images from MongoDB', error);

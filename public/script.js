@@ -154,6 +154,7 @@ async function getImagesFromMongoDB() {
 async function loadImagesFromMongoDB() {
     if (await connectToMongoDB()) {
         const data = await getImagesFromMongoDB();
+        console.log('Fetched data from backend:', data); // Debugging step
         if (data) {
             // Ensure there are movies available
             if (data.length === 0) {
@@ -189,3 +190,4 @@ async function loadImagesFromMongoDB() {
         updateMessage('Failed to connect to the database.', '#ff6f61');
     }
 }
+
