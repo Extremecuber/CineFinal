@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const path = require('path');
@@ -9,6 +10,7 @@ const port = process.env.PORT || 3000;
 const uri = 'mongodb://localhost:27017';  // Connection string
 const dbName = 'Cinedle';
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
