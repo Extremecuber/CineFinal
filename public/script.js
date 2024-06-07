@@ -135,20 +135,27 @@ async function connectToMongoDB() {
 
 async function getImagesFromMongoDB() {
     try {
-        const response = await fetch('/get-images');
-        if (response.ok) {
-            const data = await response.json();
-            console.log('Fetched data from MongoDB:', data); // Debugging step
-            return data;
+      const response = await fetch('/get-images');
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched data from MongoDB:', data); // Debugging step
+        if (data && data.length > 0) {
+          const images = data.map((movie) => movie.frames);
+          console.log('Extracted images:', images); // Debugging step
+          return images;
         } else {
-            console.error('Failed to fetch images from MongoDB');
-            return null;
+          console.log('No images found in the database.');
+          return [];
         }
+      } else {
+        console.error('Failed to fetch images from MongoDB:', response.status);
+        return [];
+      }
     } catch (err) {
-        console.error('Failed to fetch images from MongoDB', err);
-        return null;
+      console.error('Error fetching images from MongoDB:', err);
+      return [];
     }
-}
+  }
 
 // Use this function to get images from MongoDB and pass them to frames array
 async function loadImagesFromMongoDB() {
