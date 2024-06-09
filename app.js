@@ -1,34 +1,23 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { MongoClient } = require('mongodb');
+const AWS = require('aws-sdk');
 const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-const uri = 'mongodb://localhost:27017';  // Connection string
-const dbName = 'Cinedle';
+// Configure AWS SDK
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION
+});
+const bucketName = process.env.S3_BUCKET_NAME;
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-let db;
-
-async function connectToMongoDB() {
-    try {
-        const client = new MongoClient(uri);
-        await client.connect();
-        db = client.db(dbName);
-        console.log('Connected to MongoDB');
-    } catch (error) {
-        console.error('Failed to connect to MongoDB', error);
-        process.exit(1);
-    }
-}
-
-connectToMongoDB();
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -36,23 +25,19 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/connect-to-mongodb', async (req, res) => {
-    try {
-        if (!db) await connectToMongoDB();
-        res.status(200).send('Connected to MongoDB');
-    } catch (error) {
-        res.status(500).send('Failed to connect to MongoDB');
-    }
-});
-
 app.get('/get-images', async (req, res) => {
     try {
-        const movies = await db.collection('movies').find().toArray();
-        console.log('Movies fetched from MongoDB:', movies); // Log the fetched data
-        res.json(movies);
+        const params = {
+            Bucket: bucketName,
+            Prefix: 'images/' // Assuming images are stored under the 'images/' folder in your S3 bucket
+        };
+
+        const data = await s3.listObjectsV2(params).promise();
+        const imageUrls = data.Contents.map(item => `https://${bucketName}.s3.amazonaws.com/${item.Key}`);
+        res.json(imageUrls);
     } catch (error) {
-        console.error('Failed to fetch images from MongoDB', error);
-        res.status(500).json({ error: 'Failed to fetch images' });
+        console.error('Failed to fetch images from S3', error);
+        res.status(500).json({ error: 'Failed to fetch images from S3' });
     }
 });
 

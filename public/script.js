@@ -1,4 +1,4 @@
-const frames = []; // Array to hold image paths fetched from MongoDB
+const frames = []; // Array to hold image paths fetched from S3
 let correctMovie = '';  // Correct movie title will be dynamically set
 let endGameImage = '';  // End game image path will be dynamically set
 let currentFrame = 0;
@@ -113,94 +113,49 @@ function displayEndGameMessage(message, imagePath) {
 }
 
 window.onload = async () => {
-    await loadImagesFromMongoDB();
+    await loadImagesFromS3();
     updateMessage('Guess the Movie!');
 };
 
-async function connectToMongoDB() {
+async function getImagesFromS3() {
     try {
-        const response = await fetch('/connect-to-mongodb');
+        const response = await fetch('/get-images');
         if (response.ok) {
-            console.log('Connected to MongoDB');
-            return true;
+            const data = await response.json();
+            console.log('Fetched data from S3:', data); // Debugging step
+            return data;
         } else {
-            console.error('Failed to connect to MongoDB');
-            return false;
+            console.error('Failed to fetch images from S3');
+            return [];
         }
     } catch (err) {
-        console.error('Failed to connect to MongoDB', err);
-        return false;
-    }
-}
-
-async function getImagesFromMongoDB() {
-    try {
-      const response = await fetch('/get-images');
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Fetched data from MongoDB:', data); // Debugging step
-        if (data && data.length > 0) {
-          const images = data.map((movie) => movie.frames);
-          console.log('Extracted images:', images); // Debugging step
-          return images;
-        } else {
-          console.log('No images found in the database.');
-          return [];
-        }
-      } else {
-        console.error('Failed to fetch images from MongoDB:', response.status);
+        console.error('Error fetching images from S3:', err);
         return [];
-      }
-    } catch (err) {
-      console.error('Error fetching images from MongoDB:', err);
-      return [];
-    }
-  }
-
-// Use this function to get images from MongoDB and pass them to frames array
-async function loadImagesFromMongoDB() {
-    if (await connectToMongoDB()) {
-        try {
-            const response = await fetch('/get-images');
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Fetched data from backend:', data); // Debugging step
-                if (data && data.length > 0) {
-                    // Assuming each movie object has a 'frames' array
-                    data.forEach(movie => {
-                        frames.push(...movie.frames);
-                    });
-
-                    // Randomly select a movie
-                    const randomMovie = data[Math.floor(Math.random() * data.length)];
-                    console.log('Randomly selected movie:', randomMovie); // Debugging step
-
-                    // Set the correct movie title
-                    correctMovie = randomMovie.title;
-                    console.log('Correct movie title:', correctMovie); // Debugging step
-
-                    // Set the end game image path
-                    endGameImage = randomMovie.endGameImage;
-                    console.log('End game image path:', endGameImage); // Debugging step
-
-                    // Set maxGuesses based on the number of frames
-                    maxGuesses = randomMovie.frames.length;
-
-                    // Display the first frame after images are loaded
-                    displayFrame(currentFrame);
-                } else {
-                    updateMessage('No movies found in the database.', '#ff6f61');
-                }
-            } else {
-                console.error('Failed to fetch images from MongoDB');
-                updateMessage('Failed to load movies from the database.', '#ff6f61');
-            }
-        } catch (error) {
-            console.error('Error fetching images from MongoDB:', error);
-            updateMessage('Failed to load movies from the database.', '#ff6f61');
-        }
-    } else {
-        updateMessage('Failed to connect to the database.', '#ff6f61');
     }
 }
 
+// Use this function to get images from S3 and pass them to frames array
+async function loadImagesFromS3() {
+    try {
+        const data = await getImagesFromS3();
+        if (data && data.length > 0) {
+            frames.push(...data);
+
+            // Randomly select a movie (assuming each set of images corresponds to a different movie)
+            const randomMovieIndex = Math.floor(Math.random() * data.length);
+            correctMovie = `Movie ${randomMovieIndex + 1}`; // Example title, modify as needed
+            endGameImage = data[randomMovieIndex];
+
+            // Set maxGuesses based on the number of frames
+            maxGuesses = data.length;
+
+            // Display the first frame after images are loaded
+            displayFrame(currentFrame);
+        } else {
+            updateMessage('No images found in the database.', '#ff6f61');
+        }
+    } catch (error) {
+        console.error('Error loading images from S3:', error);
+        updateMessage('Failed to load images from the database.', '#ff6f61');
+    }
+}
