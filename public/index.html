@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
-    <style>
-        .frame {
-            display: inline-block;
-            margin: 10px;
-            border: 1px solid #ccc;
-            padding: 10px;
-        }
-        .frame img {
-            width: 100%;
-            height: auto;
-        }
-    </style>
+    <title>CINEDLE</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Image Gallery</h1>
-    <div id="gallery"></div>
-    <script src="script.js"></script>
+
+<h1>CINEDLE</h1>
+<div id="frames"></div>
+<div id="buttons"></div>
+<input type="text" id="guessInput" placeholder="Enter your guess">
+<button onclick="makeGuess()" id="submitGuess">Submit</button>
+<button onclick="skipFrame()" id="skipFrame">Skip</button>
+<p id="message"></p>
+
+<script src="script.js"></script>
 </body>
 </html>

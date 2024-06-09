@@ -1,4 +1,4 @@
-const frames = []; // Array to hold image paths fetched from S3
+const frames = []; // Array to hold image URLs fetched from S3
 let correctMovie = '';  // Correct movie title will be dynamically set
 let endGameImage = '';  // End game image path will be dynamically set
 let currentFrame = 0;
@@ -137,25 +137,26 @@ async function getImagesFromS3() {
 // Use this function to get images from S3 and pass them to frames array
 async function loadImagesFromS3() {
     try {
-        const data = await getImagesFromS3();
-        if (data && data.length > 0) {
-            frames.push(...data);
+        const images = await getImagesFromS3();
+        if (images.length > 0) {
+            frames.push(...images);
 
-            // Randomly select a movie (assuming each set of images corresponds to a different movie)
-            const randomMovieIndex = Math.floor(Math.random() * data.length);
-            correctMovie = `Movie ${randomMovieIndex + 1}`; // Example title, modify as needed
-            endGameImage = data[randomMovieIndex];
+            // Set the correct movie title and end game image path
+            // This needs to be adapted based on your application's logic
+            // For example, you might want to fetch movie details from another endpoint or structure your S3 objects accordingly
+            correctMovie = 'Example Movie Title'; // Set the correct movie title dynamically
+            endGameImage = frames[0]; // Set the end game image path
 
             // Set maxGuesses based on the number of frames
-            maxGuesses = data.length;
+            maxGuesses = frames.length;
 
             // Display the first frame after images are loaded
             displayFrame(currentFrame);
         } else {
-            updateMessage('No images found in the database.', '#ff6f61');
+            updateMessage('No images found in the S3 bucket.', '#ff6f61');
         }
     } catch (error) {
         console.error('Error loading images from S3:', error);
-        updateMessage('Failed to load images from the database.', '#ff6f61');
+        updateMessage('Failed to load images from the S3 bucket.', '#ff6f61');
     }
 }
