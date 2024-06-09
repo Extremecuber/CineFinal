@@ -1,6 +1,8 @@
+require('dotenv').config();
+
 module.exports = {
-  accessKeyId: process.env.AKIA2W6XGUVKFAULV6UF,
-  secretAccessKey: process.env.xaupXaVACoWpICLS8u4RUY7mFtppcbLNnM8rX4B,
-  region: process.env.eu-north-1, // e.g., 'us-east-1'
-  bucketName: process.env.cinedleframes,
+    awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    awsRegion: process.env.AWS_REGION,
+    s3BucketName: process.env.S3_BUCKET_NAME
 };
