@@ -140,7 +140,7 @@ async function loadImagesFromS3() {
                         frames.push(...imagesData.frames.slice(0, 6));
 
                         // Set the end game image
-                        endGameImage = imagesData.frames[imagesData.frames.length - 1];
+                        endGameImage = imagesData.frames[6];
                         console.log('End game image path:', endGameImage); // Debugging step
 
                         // Set the correct movie title
