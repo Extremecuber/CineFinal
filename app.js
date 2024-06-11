@@ -16,13 +16,18 @@ const s3 = new AWS.S3({
 
 const bucketName = process.env.AWS_BUCKET_NAME;
 
-// Use backticks for template literals
-const listparams = {
-    Bucket: 'cinedleframes',
+if (!bucketName) {
+    console.error('Error: AWS_BUCKET_NAME environment variable is not set');
+    process.exit(1);
+}
+
+// Test S3 connection (optional, can be removed after confirming it works)
+const listParams = {
+    Bucket: bucketName,
+    Delimiter: '/'
 };
 
-// Use correct variable name: s3 instead of s3Client
-s3.listObjectsV2(params, (err, data) => {
+s3.listObjectsV2(listParams, (err, data) => {
     if (err) {
         console.error('Error:', err);
     } else {
@@ -54,7 +59,7 @@ app.get('/get-images', async (req, res) => {
     const folder = req.query.folder;
     try {
         const listParams = {
-            Bucket: `${bucketName}`,
+            Bucket: bucketName,
             Prefix: `${folder}/`
         };
         const data = await s3.listObjectsV2(listParams).promise();
