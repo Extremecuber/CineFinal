@@ -5,18 +5,6 @@ require('dotenv').config();
 
 const app = express();
 
-// Log environment variables to ensure they are set
-console.log('AWS_ACCESS_KEY_ID:', process.env.AWS_ACCESS_KEY_ID);
-console.log('AWS_SECRET_ACCESS_KEY:', process.env.AWS_SECRET_ACCESS_KEY);
-console.log('AWS_REGION:', process.env.AWS_REGION);
-console.log('AWS_BUCKET_NAME:', process.env.AWS_BUCKET_NAME);
-
-// Ensure environment variables are loaded
-if (!process.env.AWS_BUCKET_NAME) {
-    console.error('Error: AWS_BUCKET_NAME environment variable is not set');
-    process.exit(1);
-}
-
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -27,20 +15,6 @@ const s3 = new AWS.S3({
 });
 
 const bucketName = process.env.AWS_BUCKET_NAME;
-
-// Test S3 connection (optional, can be removed after confirming it works)
-const listParams = {
-    Bucket: bucketName,
-    Delimiter: '/'
-};
-
-s3.listObjectsV2(listParams, (err, data) => {
-    if (err) {
-        console.error('Error:', err);
-    } else {
-        console.log('Success:', data);
-    }
-});
 
 // Route to serve the index.html file
 app.get('/', (req, res) => {
@@ -64,9 +38,13 @@ app.get('/get-movies', async (req, res) => {
 
 app.get('/get-images', async (req, res) => {
     const folder = req.query.folder;
+    if (!folder) {
+        return res.status(400).json({ error: 'Folder parameter is required' });
+    }
+
     try {
         const listParams = {
-            Bucket: `${bucketName}`,
+            Bucket: bucketName,
             Prefix: `${folder}/`
         };
         const data = await s3.listObjectsV2(listParams).promise();
