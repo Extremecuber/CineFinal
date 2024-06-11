@@ -21,10 +21,7 @@ function displayFrame(index) {
     }
     document.getElementById('frames').appendChild(frameDiv);
 
-    if (index === 0) {
-        createButton(index);
-    }
-
+    createButton(index);
     document.getElementById('submitGuess').disabled = false; // Enable submit button when showing a new frame
 }
 
@@ -58,39 +55,40 @@ function makeGuess() {
     }
 
     if (userGuess.toLowerCase() === correctMovie.toLowerCase()) {
-        displayEndGameMessage('Congratulations! You guessed it!', endGameImage); // Use dynamically fetched end game image
+        displayEndGameMessage('Congratulations! You guessed it!', endGameImage);
         return;
     }
 
     if (guesses >= maxGuesses) {
-        displayEndGameMessage(`Sorry, you've used all your guesses. The correct movie was "${correctMovie}".`, endGameImage); // Use dynamically fetched end game image
+        displayEndGameMessage(`Sorry, you've used all your guesses. The correct movie was "${correctMovie}".`, endGameImage);
         return;
     }
 
     document.getElementById('guessInput').value = '';
 
     currentFrame++;
-    displayFrame(currentFrame);
-    createButton(currentFrame);
-    toggleFrame(currentFrame);
-    updateMessage(`Incorrect! You have ${maxGuesses - guesses} guesses left.`, '#ff6347'); // Changed to a more visible color
+    if (currentFrame < frames.length) {
+        displayFrame(currentFrame);
+        toggleFrame(currentFrame);
+    }
+    updateMessage(`Incorrect! You have ${maxGuesses - guesses} guesses left.`, '#ff6347');
 }
 
 function skipFrame() {
     guesses++;
     if (guesses >= maxGuesses) {
-        displayEndGameMessage(`Sorry, you've used all your guesses. The correct movie was "${correctMovie}".`, endGameImage); // Use dynamically fetched end game image
+        displayEndGameMessage(`Sorry, you've used all your guesses. The correct movie was "${correctMovie}".`, endGameImage);
         return;
     }
     document.getElementById('guessInput').value = '';
     currentFrame++;
-    displayFrame(currentFrame);
-    createButton(currentFrame);
-    toggleFrame(currentFrame);
-    updateMessage(`Frame skipped! You have ${maxGuesses - guesses} guesses left.`, '#ff6347'); // Changed to a more visible color
+    if (currentFrame < frames.length) {
+        displayFrame(currentFrame);
+        toggleFrame(currentFrame);
+    }
+    updateMessage(`Frame skipped! You have ${maxGuesses - guesses} guesses left.`, '#ff6347');
 }
 
-// Function to display the end game message with image
 function displayEndGameMessage(message, imagePath) {
     const body = document.body;
     body.innerHTML = ''; // Clear the entire content of the body
@@ -117,7 +115,6 @@ window.onload = async () => {
     updateMessage('Guess the Movie!');
 };
 
-// Fetch folders from S3 and then fetch images from one of the folders
 async function loadImagesFromS3() {
     try {
         const response = await fetch('/get-movies');
