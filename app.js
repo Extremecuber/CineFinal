@@ -17,8 +17,8 @@ const s3 = new AWS.S3({
 const bucketName = process.env.AWS_BUCKET_NAME;
 
 // Use backticks for template literals
-const params = {
-    Bucket: `${bucketName}`,
+const listparams = {
+    Bucket: 'cinedleframes',
 };
 
 // Use correct variable name: s3 instead of s3Client
