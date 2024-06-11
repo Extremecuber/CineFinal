@@ -22,7 +22,7 @@ const listparams = {
 };
 
 // Use correct variable name: s3 instead of s3Client
-s3.listObjectsV2(params, (err, data) => {
+s3.listObjectsV2(listparams, (err, data) => {
     if (err) {
         console.error('Error:', err);
     } else {
