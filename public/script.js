@@ -3,7 +3,7 @@ let correctMovie = '';
 let endGameImage = '';
 let currentFrame = 0;
 let guesses = 0;
-let maxGuesses = 0;
+let maxGuesses = 6; // We only use 6 frames for the puzzle
 
 function displayFrame(index) {
     const existingFrame = document.getElementById(`frame${index}`);
@@ -134,18 +134,16 @@ async function loadImagesFromS3() {
                     console.log('Fetched images from selected folder:', imagesData); // Debugging step
 
                     if (imagesData && imagesData.frames.length > 0) {
-                        frames.push(...imagesData.frames);
+                        // Use only the first 6 frames for the puzzle
+                        frames.push(...imagesData.frames.slice(0, 6));
+
+                        // Set the end game image
+                        endGameImage = imagesData.frames[6];
+                        console.log('End game image path:', endGameImage); // Debugging step
 
                         // Set the correct movie title
                         correctMovie = randomFolder; // Assuming the folder name is the movie title
                         console.log('Correct movie title:', correctMovie); // Debugging step
-
-                        // Set the end game image path
-                        endGameImage = imagesData.endGameImage;
-                        console.log('End game image path:', endGameImage); // Debugging step
-
-                        // Set maxGuesses based on the number of frames
-                        maxGuesses = imagesData.frames.length;
 
                         // Display the first frame after images are loaded
                         displayFrame(currentFrame);
