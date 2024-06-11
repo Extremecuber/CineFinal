@@ -1,7 +1,12 @@
 const express = require('express');
 const AWS = require('aws-sdk');
-const app = express();
+const path = require('path');
 require('dotenv').config();
+
+const app = express();
+
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -10,6 +15,11 @@ const s3 = new AWS.S3({
 });
 
 const bucketName = process.env.AWS_BUCKET_NAME;
+
+// Route to serve the index.html file
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.get('/get-movies', async (req, res) => {
     try {
@@ -43,6 +53,8 @@ app.get('/get-images', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
