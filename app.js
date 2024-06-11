@@ -16,6 +16,20 @@ const s3 = new AWS.S3({
 
 const bucketName = process.env.AWS_BUCKET_NAME;
 
+// Use backticks for template literals
+const params = {
+    Bucket: `${bucketName}`,
+};
+
+// Use correct variable name: s3 instead of s3Client
+s3.listObjectsV2(params, (err, data) => {
+    if (err) {
+        console.error('Error:', err);
+    } else {
+        console.log('Success:', data);
+    }
+});
+
 // Route to serve the index.html file
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
