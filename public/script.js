@@ -138,6 +138,9 @@ async function loadImagesFromS3() {
                     if (imagesData && imagesData.frames.length >= 7) {
                         // Use only the first 6 frames for the puzzle
                         frames.push(...imagesData.frames.slice(0, 6));
+                        
+                        // Debugging log to show all fetched images
+                        console.log('All fetched images:', imagesData.frames);
 
                         // Set the end game image
                         endGameImage = imagesData.frames[imagesData.frames.length - 1];
