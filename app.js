@@ -18,7 +18,7 @@ const bucketName = process.env.AWS_BUCKET_NAME;
 
 // Use backticks for template literals
 const params = {
-    Bucket: cinedleframes,
+    Bucket: 'cinedleframes',
 };
 
 // Use correct variable name: s3 instead of s3Client
