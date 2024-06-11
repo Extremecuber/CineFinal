@@ -3,7 +3,7 @@ let correctMovie = '';
 let endGameImage = '';
 let currentFrame = 0;
 let guesses = 0;
-let maxGuesses = 6; // We only use 6 frames for the puzzle
+const maxGuesses = 6; // We only use 6 frames for the puzzle
 
 function displayFrame(index) {
     const existingFrame = document.getElementById(`frame${index}`);
@@ -21,7 +21,9 @@ function displayFrame(index) {
     }
     document.getElementById('frames').appendChild(frameDiv);
 
-    createButton(index);
+    if (index < maxGuesses) {
+        createButton(index);
+    }
     document.getElementById('submitGuess').disabled = false; // Enable submit button when showing a new frame
 }
 
@@ -133,7 +135,7 @@ async function loadImagesFromS3() {
                     const imagesData = await imagesResponse.json();
                     console.log('Fetched images from selected folder:', imagesData); // Debugging step
 
-                    if (imagesData && imagesData.frames.length > 0) {
+                    if (imagesData && imagesData.frames.length >= 7) {
                         // Use only the first 6 frames for the puzzle
                         frames.push(...imagesData.frames.slice(0, 6));
 
@@ -148,7 +150,7 @@ async function loadImagesFromS3() {
                         // Display the first frame after images are loaded
                         displayFrame(currentFrame);
                     } else {
-                        updateMessage('No images found in the selected folder.', '#ff6f61');
+                        updateMessage('Not enough images found in the selected folder.', '#ff6f61');
                     }
                 } else {
                     console.error('Failed to fetch images from the selected folder');
