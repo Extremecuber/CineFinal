@@ -54,7 +54,7 @@ app.get('/get-images', async (req, res) => {
     const folder = req.query.folder;
     try {
         const listParams = {
-            Bucket: bucketName,
+            Bucket: `${bucketName}`,
             Prefix: `${folder}/`
         };
         const data = await s3.listObjectsV2(listParams).promise();
