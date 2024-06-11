@@ -1,4 +1,4 @@
-const frames = []; // Array to hold image URLs fetched from S3
+const frames = []; // Array to hold image paths fetched from S3
 let correctMovie = '';  // Correct movie title will be dynamically set
 let endGameImage = '';  // End game image path will be dynamically set
 let currentFrame = 0;
@@ -20,6 +20,8 @@ function displayFrame(index) {
         frameDiv.classList.add('hidden');
     }
     document.getElementById('frames').appendChild(frameDiv);
+
+    console.log(`Displayed frame ${index}: ${frames[index]}`); // Debugging step
 
     if (index === 0) {
         createButton(index);
@@ -126,26 +128,34 @@ async function getImagesFromS3() {
             return data;
         } else {
             console.error('Failed to fetch images from S3');
-            return [];
+            return null;
         }
     } catch (err) {
-        console.error('Error fetching images from S3:', err);
-        return [];
+        console.error('Failed to fetch images from S3', err);
+        return null;
     }
 }
 
 // Use this function to get images from S3 and pass them to frames array
 async function loadImagesFromS3() {
     try {
-        const images = await getImagesFromS3();
-        if (images.length > 0) {
-            frames.push(...images);
+        const data = await getImagesFromS3();
+        if (data && data.length > 0) {
+            // Assuming each item in data is an image URL
+            frames.push(...data);
 
-            // Set the correct movie title and end game image path
-            // This needs to be adapted based on your application's logic
-            // For example, you might want to fetch movie details from another endpoint or structure your S3 objects accordingly
-            correctMovie = 'Example Movie Title'; // Set the correct movie title dynamically
-            endGameImage = frames[0]; // Set the end game image path
+            // Randomly select a movie (or image in this case)
+            const randomIndex = Math.floor(Math.random() * data.length);
+            const randomImage = data[randomIndex];
+            console.log('Randomly selected image:', randomImage); // Debugging step
+
+            // Set the correct movie title (for now, just an empty string or placeholder)
+            correctMovie = "Sample Movie"; // Update accordingly if needed
+            console.log('Correct movie title:', correctMovie); // Debugging step
+
+            // Set the end game image path
+            endGameImage = randomImage;
+            console.log('End game image path:', endGameImage); // Debugging step
 
             // Set maxGuesses based on the number of frames
             maxGuesses = frames.length;
@@ -153,10 +163,10 @@ async function loadImagesFromS3() {
             // Display the first frame after images are loaded
             displayFrame(currentFrame);
         } else {
-            updateMessage('No images found in the S3 bucket.', '#ff6f61');
+            updateMessage('No images found in the bucket.', '#ff6f61');
         }
     } catch (error) {
-        console.error('Error loading images from S3:', error);
-        updateMessage('Failed to load images from the S3 bucket.', '#ff6f61');
+        console.error('Error fetching images from S3:', error);
+        updateMessage('Failed to load images from the bucket.', '#ff6f61');
     }
 }
