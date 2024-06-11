@@ -146,12 +146,8 @@ async function loadImagesFromS3() {
                         endGameImage = imagesData.frames[imagesData.frames.length - 1];
                         console.log('End game image path:', endGameImage); // Debugging step
 
-                        // Set the correct movie title
-                        correctMovie = randomFolder; // Assuming the folder name is the movie title
-                        console.log('Correct movie title:', correctMovie); // Debugging step
-
-                        // Display the first frame after images are loaded
-                        displayFrame(currentFrame);
+                        // Display all fetched images
+                        displayAllImages(imagesData.frames);
                     } else {
                         updateMessage('Not enough images found in the selected folder.', '#ff6f61');
                     }
@@ -170,4 +166,14 @@ async function loadImagesFromS3() {
         console.error('Error fetching folders or images from S3:', error);
         updateMessage('Failed to load data from S3.', '#ff6f61');
     }
+}
+
+function displayAllImages(images) {
+    const imagesContainer = document.getElementById('images-container');
+    images.forEach((imageUrl, index) => {
+        const imageElement = document.createElement('img');
+        imageElement.src = imageUrl;
+        imageElement.alt = `Image ${index + 1}`;
+        imagesContainer.appendChild(imageElement);
+    });
 }
