@@ -3,7 +3,7 @@ let correctMovie = '';
 let endGameImage = '';
 let currentFrame = 0;
 let guesses = 0;
-const maxGuesses = 6; // We only use 6 frames for the puzzle
+let maxGuesses = 0;
 
 function displayFrame(index) {
     const existingFrame = document.getElementById(`frame${index}`);
@@ -21,9 +21,7 @@ function displayFrame(index) {
     }
     document.getElementById('frames').appendChild(frameDiv);
 
-    if (index < maxGuesses) {
-        createButton(index);
-    }
+    createButton(index);
     document.getElementById('submitGuess').disabled = false; // Enable submit button when showing a new frame
 }
 
@@ -135,25 +133,24 @@ async function loadImagesFromS3() {
                     const imagesData = await imagesResponse.json();
                     console.log('Fetched images from selected folder:', imagesData); // Debugging step
 
-                    if (imagesData && imagesData.frames.length >= 7) {
-                        // Use only the first 6 frames for the puzzle
-                        frames.push(...imagesData.frames.slice(0, 6));
-                        
-                        // Debugging log to show all fetched images
-                        console.log('All fetched images:', imagesData.frames);
-
-                        // Set the end game image
-                        endGameImage = imagesData.frames[imagesData.frames.length - 1];
-                        console.log('End game image path:', endGameImage); // Debugging step
+                    if (imagesData && imagesData.frames.length > 0) {
+                        frames.push(...imagesData.frames);
 
                         // Set the correct movie title
                         correctMovie = randomFolder; // Assuming the folder name is the movie title
                         console.log('Correct movie title:', correctMovie); // Debugging step
 
+                        // Set the end game image path
+                        endGameImage = imagesData.endGameImage;
+                        console.log('End game image path:', endGameImage); // Debugging step
+
+                        // Set maxGuesses based on the number of frames
+                        maxGuesses = imagesData.frames.length;
+
                         // Display the first frame after images are loaded
                         displayFrame(currentFrame);
                     } else {
-                        updateMessage('Not enough images found in the selected folder.', '#ff6f61');
+                        updateMessage('No images found in the selected folder.', '#ff6f61');
                     }
                 } else {
                     console.error('Failed to fetch images from the selected folder');
