@@ -134,7 +134,7 @@ async function loadImagesFromS3() {
                     console.log('Fetched images from selected folder:', imagesData); // Debugging step
 
                     if (imagesData && imagesData.frames.length > 0) {
-                        frames.push(...imagesData.frames);
+                        frames.push(...imagesData.frames.slice(1,7));
 
                         // Set the correct movie title
                         correctMovie = randomFolder; // Assuming the folder name is the movie title
@@ -145,7 +145,7 @@ async function loadImagesFromS3() {
                         console.log('End game image path:', endGameImage); // Debugging step
 
                         // Set maxGuesses based on the number of frames
-                        maxGuesses = imagesData.frames.length;
+                        maxGuesses = imagesData.frames.length - 1;
 
                         // Display the first frame after images are loaded
                         displayFrame(currentFrame);
