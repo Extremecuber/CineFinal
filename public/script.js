@@ -134,7 +134,7 @@ async function loadImagesFromS3() {
                     console.log('Fetched images from selected folder:', imagesData); // Debugging step
 
                     if (imagesData && imagesData.frames.length > 0) {
-                        frames.push(...imagesData.frames.slice(0,6));
+                        frames.push(...imagesData.frames.slice(0,7));
 
                         // Set the correct movie title
                         correctMovie = randomFolder; // Assuming the folder name is the movie title
