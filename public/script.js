@@ -93,22 +93,37 @@ function displayEndGameMessage(message, imagePath) {
     const body = document.body;
     body.innerHTML = ''; // Clear the entire content of the body
 
+    // Create a container for the message and image
+    const container = document.createElement('div');
+    container.className = 'end-game-container';
+
     const messageElement = document.createElement('p');
     messageElement.innerText = message;
     messageElement.style.color = '#28a745'; // Success color
     messageElement.style.fontSize = '2em';
-    messageElement.style.marginTop = '20px';
+    messageElement.style.marginBottom = '20px';
+
+    const imageContainer = document.createElement('div');
+    imageContainer.className = 'image-container';
 
     const imageElement = document.createElement('img');
     imageElement.src = imagePath;
     imageElement.alt = 'End Game Image';
-    imageElement.style.width = '50%'; // Adjust as needed
-    imageElement.style.height = 'auto'; // Maintain aspect ratio
-    imageElement.style.marginTop = '20px';
 
-    body.appendChild(messageElement);
-    body.appendChild(imageElement);
+    const playAgainButton = document.createElement('button');
+    playAgainButton.innerText = 'Play Again';
+    playAgainButton.onclick = () => {
+        window.location.reload(); // Reload the page to play again
+    };
+
+    imageContainer.appendChild(imageElement);
+    container.appendChild(messageElement);
+    container.appendChild(imageContainer);
+    container.appendChild(playAgainButton);
+
+    body.appendChild(container);
 }
+
 
 window.onload = async () => {
     await loadImagesFromS3();
