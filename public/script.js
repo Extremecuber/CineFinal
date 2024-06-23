@@ -5,107 +5,6 @@ let currentFrame = 0;
 let guesses = 0;
 let maxGuesses = 0;
 
-async function fetchMovieNames() {
-    try {
-        const response = await fetch('/get-movie-names');
-        if (response.ok) {
-            const movieNames = await response.json();
-            populateDropdown(movieNames);
-        } else {
-            console.error('Failed to fetch movie names');
-        }
-    } catch (error) {
-        console.error('Error fetching movie names:', error);
-    }
-}
-
-function populateDropdown(movieNames) {
-    const dropdown = document.getElementById('movieDropdown');
-    dropdown.innerHTML = ''; // Clear previous entries
-    movieNames.forEach(name => {
-        const li = document.createElement('li');
-        li.innerText = name;
-        li.onclick = () => selectMovieName(name);
-        dropdown.appendChild(li);
-    });
-}
-
-function filterDropdown() {
-    const input = document.getElementById('movieSearchInput').value.toLowerCase();
-    const items = document.querySelectorAll('#movieDropdown li');
-    items.forEach(item => {
-        if (item.innerText.toLowerCase().startsWith(input)) {
-            item.style.display = '';
-        } else {
-            item.style.display = 'none';
-        }
-    });
-}
-
-function selectMovieName(name) {
-    document.getElementById('guessInput').value = name;
-    document.getElementById('movieDropdown').innerHTML = ''; // Clear dropdown
-}
-
-document.getElementById('movieSearchInput').addEventListener('input', filterDropdown);
-
-window.onload = async () => {
-    await fetchMovieNames();
-    await loadImagesFromS3();
-    updateMessage('Guess the Movie!');
-};
-
-async function loadImagesFromS3() {
-    try {
-        const response = await fetch('/get-movies');
-        if (response.ok) {
-            const data = await response.json();
-            console.log('Fetched folders from S3:', data); // Debugging step
-
-            if (data && data.length > 0) {
-                // Randomly select a folder
-                const randomFolder = data[Math.floor(Math.random() * data.length)];
-                console.log('Randomly selected folder:', randomFolder); // Debugging step
-
-                // Fetch images from the selected folder
-                const imagesResponse = await fetch(`/get-images?folder=${randomFolder}`);
-                if (imagesResponse.ok) {
-                    const imagesData = await imagesResponse.json();
-                    console.log('Fetched images from selected folder:', imagesData); // Debugging step
-
-                    if (imagesData && imagesData.frames.length > 0) {
-                        frames.push(...imagesData.frames.slice(0, -1)); // Use all but the last image
-                        endGameImage = imagesData.frames[imagesData.frames.length - 1]; // Use the last image as the end game image
-
-                        // Set the correct movie title
-                        correctMovie = randomFolder; // Assuming the folder name is the movie title
-                        console.log('Correct movie title:', correctMovie); // Debugging step
-
-                        // Set maxGuesses based on the number of frames
-                        maxGuesses = frames.length;
-
-                        // Display the first frame after images are loaded
-                        displayFrame(currentFrame);
-                    } else {
-                        updateMessage('No images found in the selected folder.', '#ff6f61');
-                    }
-                } else {
-                    console.error('Failed to fetch images from the selected folder');
-                    updateMessage('Failed to load images from the selected folder.', '#ff6f61');
-                }
-            } else {
-                updateMessage('No folders found in the bucket.', '#ff6f61');
-            }
-        } else {
-            console.error('Failed to fetch folders from S3');
-            updateMessage('Failed to load folders from S3.', '#ff6f61');
-        }
-    } catch (error) {
-        console.error('Error fetching folders or images from S3:', error);
-        updateMessage('Failed to load data from S3.', '#ff6f61');
-    }
-}
-
 function displayFrame(index) {
     const existingFrame = document.getElementById(`frame${index}`);
     if (existingFrame) {
@@ -209,4 +108,107 @@ function displayEndGameMessage(message, imagePath) {
 
     body.appendChild(messageElement);
     body.appendChild(imageElement);
+}
+
+window.onload = async () => {
+    await loadImagesFromS3();
+    updateMessage('Guess the Movie!');
+    await loadMovieNames();
+};
+
+// Fetch folders from S3 and then fetch images from one of the folders
+async function loadImagesFromS3() {
+    try {
+        const response = await fetch('/get-movies');
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Fetched folders from S3:', data); // Debugging step
+
+            if (data && data.length > 0) {
+                // Randomly select a folder
+                const randomFolder = data[Math.floor(Math.random() * data.length)];
+                console.log('Randomly selected folder:', randomFolder); // Debugging step
+
+                // Fetch images from the selected folder
+                const imagesResponse = await fetch(`/get-images?folder=${randomFolder}`);
+                if (imagesResponse.ok) {
+                    const imagesData = await imagesResponse.json();
+                    console.log('Fetched images from selected folder:', imagesData); // Debugging step
+
+                    if (imagesData && imagesData.frames.length > 0) {
+                        frames.push(...imagesData.frames);
+
+                        // Set the correct movie title
+                        correctMovie = randomFolder; // Assuming the folder name is the movie title
+                        console.log('Correct movie title:', correctMovie); // Debugging step
+
+                        // Set the end game image path
+                        endGameImage = imagesData.endGameImage;
+                        console.log('End game image path:', endGameImage); // Debugging step
+
+                        // Set maxGuesses based on the number of frames
+                        maxGuesses = imagesData.frames.length;
+
+                        // Display the first frame after images are loaded
+                        displayFrame(currentFrame);
+                    } else {
+                        updateMessage('No images found in the selected folder.', '#ff6f61');
+                    }
+                } else {
+                    console.error('Failed to fetch images from the selected folder');
+                    updateMessage('Failed to load images from the selected folder.', '#ff6f61');
+                }
+            } else {
+                updateMessage('No folders found in the bucket.', '#ff6f61');
+            }
+        } else {
+            console.error('Failed to fetch folders from S3');
+            updateMessage('Failed to load folders from S3.', '#ff6f61');
+        }
+    } catch (error) {
+        console.error('Error fetching folders or images from S3:', error);
+        updateMessage('Failed to load data from S3.', '#ff6f61');
+    }
+}
+
+// Fetch movie names from S3 and populate the dropdown
+async function loadMovieNames() {
+    try {
+        const response = await fetch('/get-movie-names');
+        if (response.ok) {
+            const movieNames = await response.json();
+            console.log('Fetched movie names from S3:', movieNames); // Debugging step
+
+            const guessInput = document.getElementById('guessInput');
+            guessInput.addEventListener('input', () => filterMovieDropdown(guessInput.value, movieNames));
+        } else {
+            console.error('Failed to fetch movie names from S3');
+        }
+    } catch (error) {
+        console.error('Error fetching movie names from S3:', error);
+    }
+}
+
+// Filter movie dropdown based on input
+function filterMovieDropdown(input, movieNames) {
+    const movieDropdown = document.getElementById('movieDropdown');
+    movieDropdown.innerHTML = ''; // Clear previous options
+
+    const filteredMovies = movieNames.filter(movie => movie.toLowerCase().startsWith(input.toLowerCase()));
+
+    filteredMovies.forEach(movie => {
+        const li = document.createElement('li');
+        li.textContent = movie;
+        li.onclick = () => selectMovie(movie);
+        movieDropdown.appendChild(li);
+    });
+
+    // Show or hide dropdown based on whether there are any matches
+    movieDropdown.style.display = filteredMovies.length > 0 ? 'block' : 'none';
+}
+
+// When a movie is selected from the dropdown, populate the input field
+function selectMovie(movie) {
+    document.getElementById('guessInput').value = movie;
+    document.getElementById('movieDropdown').style.display = 'none';
 }
