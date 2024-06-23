@@ -36,6 +36,22 @@ app.get('/get-movies', async (req, res) => {
     }
 });
 
+// New route to get movie names
+app.get('/get-movie-names', async (req, res) => {
+    try {
+        const listParams = {
+            Bucket: bucketName,
+            Delimiter: '/'
+        };
+        const data = await s3.listObjectsV2(listParams).promise();
+        const movieNames = data.CommonPrefixes.map(prefix => prefix.Prefix.slice(0, -1)); // Remove trailing '/'
+        res.json(movieNames);
+    } catch (error) {
+        console.error('Error fetching movie names:', error);
+        res.status(500).json({ error: 'Error fetching movie names' });
+    }
+});
+
 app.get('/get-images', async (req, res) => {
     const folder = req.query.folder;
     if (!folder) {

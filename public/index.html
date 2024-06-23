@@ -7,15 +7,21 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1>Cinedle</h1>
+    <div id="game">
+        <div id="frames"></div>
+        <input type="text" id="guessInput" placeholder="Enter your guess here">
+        <button id="submitGuess" onclick="makeGuess()">Submit</button>
+        <button onclick="skipFrame()">Skip</button>
+        <div id="message"></div>
+    </div>
+    
+    <!-- Dropdown for movie names -->
+    <input type="text" id="movieSearchInput" placeholder="Search for a movie">
+    <ul id="movieDropdown" class="dropdown"></ul>
 
-<h1>CINEDLE</h1>
-<div id="frames"></div>
-<div id="buttons"></div>
-<input type="text" id="guessInput" placeholder="Enter your guess">
-<button onclick="makeGuess()" id="submitGuess">Submit</button>
-<button onclick="skipFrame()" id="skipFrame">Skip</button>
-<p id="message"></p>
+    <div id="buttons"></div>
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
