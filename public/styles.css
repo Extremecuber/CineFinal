@@ -102,7 +102,7 @@ button:disabled:hover {
     border-top: none;
     display: none; /* Initially hidden */
     position: absolute; /* Position it absolutely */
-    background-color: #0011ff; /* White background */
+    background-color: #000000; /* White background */
     z-index: 1000; /* Ensure it appears above other elements */
     width: calc(100% - 22px); /* Adjust width to match input field */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Box shadow for dropdown */
@@ -115,5 +115,5 @@ button:disabled:hover {
 }
 
 .dropdown li:hover {
-    background-color: #000000; /* Light gray background on hover */
+    background-color: #888888; /* Light gray background on hover */
 }
