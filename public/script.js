@@ -129,6 +129,22 @@ window.onload = async () => {
             makeGuess();
         }
     });
+
+    // Add event listener for Enter key in movieSearchInput
+    document.getElementById('movieSearchInput').addEventListener('input', filterMovies);
+    document.getElementById('movieSearchInput').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            selectMovie();
+        }
+    });
+
+    // Add click event listener to dropdown items
+    document.getElementById('movieDropdown').addEventListener('click', function(event) {
+        if (event.target.tagName === 'LI') {
+            document.getElementById('movieSearchInput').value = event.target.innerText;
+            document.getElementById('movieDropdown').style.display = 'none';
+        }
+    });
 };
 
 async function loadImagesFromS3() {
@@ -182,5 +198,34 @@ async function loadImagesFromS3() {
     } catch (error) {
         console.error('Error fetching folders or images from S3:', error);
         updateMessage('Failed to load data from S3.', '#ff6f61');
+    }
+}
+
+async function filterMovies() {
+    const query = document.getElementById('movieSearchInput').value.toLowerCase();
+    const response = await fetch('/get-movies');
+    const movies = await response.json();
+    const filteredMovies = movies.filter(movie => movie.toLowerCase().startsWith(query));
+
+    const dropdown = document.getElementById('movieDropdown');
+    dropdown.innerHTML = '';
+    if (filteredMovies.length > 0) {
+        dropdown.style.display = 'block';
+        filteredMovies.forEach(movie => {
+            const li = document.createElement('li');
+            li.innerText = movie;
+            dropdown.appendChild(li);
+        });
+    } else {
+        dropdown.style.display = 'none';
+    }
+}
+
+function selectMovie() {
+    const input = document.getElementById('movieSearchInput');
+    const dropdown = document.getElementById('movieDropdown');
+    if (dropdown.children.length > 0) {
+        input.value = dropdown.children[0].innerText;
+        dropdown.style.display = 'none';
     }
 }
