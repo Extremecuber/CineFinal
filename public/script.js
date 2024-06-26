@@ -119,16 +119,18 @@ function displayEndGameMessage(message, imagePath) {
     body.appendChild(container);
 }
 
-
-
-
 window.onload = async () => {
     await loadImagesFromS3();
     updateMessage('Guess the Movie!');
-    await loadMovieNames();
+
+    // Add event listener for Enter key in guessInput
+    document.getElementById('guessInput').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            makeGuess();
+        }
+    });
 };
 
-// Fetch folders from S3 and then fetch images from one of the folders
 async function loadImagesFromS3() {
     try {
         const response = await fetch('/get-movies');
@@ -181,46 +183,4 @@ async function loadImagesFromS3() {
         console.error('Error fetching folders or images from S3:', error);
         updateMessage('Failed to load data from S3.', '#ff6f61');
     }
-}
-
-// Fetch movie names from S3 and populate the dropdown
-async function loadMovieNames() {
-    try {
-        const response = await fetch('/get-movie-names');
-        if (response.ok) {
-            const movieNames = await response.json();
-            console.log('Fetched movie names from S3:', movieNames); // Debugging step
-
-            const guessInput = document.getElementById('guessInput');
-            guessInput.addEventListener('input', () => filterMovieDropdown(guessInput.value, movieNames));
-        } else {
-            console.error('Failed to fetch movie names from S3');
-        }
-    } catch (error) {
-        console.error('Error fetching movie names from S3:', error);
-    }
-}
-
-// Filter movie dropdown based on input
-function filterMovieDropdown(input, movieNames) {
-    const movieDropdown = document.getElementById('movieDropdown');
-    movieDropdown.innerHTML = ''; // Clear previous options
-
-    const filteredMovies = movieNames.filter(movie => movie.toLowerCase().startsWith(input.toLowerCase()));
-
-    filteredMovies.forEach(movie => {
-        const li = document.createElement('li');
-        li.textContent = movie;
-        li.onclick = () => selectMovie(movie);
-        movieDropdown.appendChild(li);
-    });
-
-    // Show or hide dropdown based on whether there are any matches
-    movieDropdown.style.display = filteredMovies.length > 0 ? 'block' : 'none';
-}
-
-// When a movie is selected from the dropdown, populate the input field
-function selectMovie(movie) {
-    document.getElementById('guessInput').value = movie;
-    document.getElementById('movieDropdown').style.display = 'none';
 }
