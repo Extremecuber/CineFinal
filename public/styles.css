@@ -103,7 +103,7 @@ button:disabled:hover {
     border-top: none;
     display: none; /* Initially hidden */
     position: absolute; /* Position it absolutely */
-    background-color: #fff; /* White background */
+    background-color: #888888; /* White background */
     z-index: 1000; /* Ensure it appears above other elements */
     width: 80%; /* Match input field width */
     max-width: 300px; /* Match input field max-width */
@@ -117,7 +117,7 @@ button:disabled:hover {
 }
 
 .dropdown li:hover {
-    background-color: #f0f0f0; /* Light gray background on hover */
+    background-color: #000000; /* Light gray background on hover */
 }
 
 /* Container for the end game message and image */
