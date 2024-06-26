@@ -121,6 +121,7 @@ function displayEndGameMessage(message, imagePath) {
 
 
 
+
 window.onload = async () => {
     await loadImagesFromS3();
     updateMessage('Guess the Movie!');
